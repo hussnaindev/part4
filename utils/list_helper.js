@@ -11,16 +11,20 @@ const totalLikes = (blogs) =>
 
 const favoriteBlog = (blogs) =>
 {
-    let max = blogs[0].likes
     let favBlog = {}
-    blogs.forEach(blog =>
-        {
-            if(blog.likes>max)
+    if(blogs.length !== 0)
+    {
+        let max = blogs[0].likes
+        blogs.forEach(blog =>
             {
-                max = blog.likes
-                favBlog = blog
-            }
-        })
+                if(blog.likes>=max)
+                {
+                    max = blog.likes
+                    favBlog = blog
+                }
+            })
+    }
+   
     return favBlog
 }
 
