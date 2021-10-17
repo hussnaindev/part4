@@ -2,6 +2,12 @@ const dummy = (blogs) => {
     return 1
 }
 
-module.exports = {
-    dummy
+const totalLikes = (blogs) =>
+{
+    let sum = 0
+    blogs.forEach(blog => sum+=blog.likes)
+    return sum
 }
+
+module.exports = {dummy,totalLikes}
+
