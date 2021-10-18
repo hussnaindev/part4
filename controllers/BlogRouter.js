@@ -7,12 +7,17 @@ const logger = require('../utils/logger')
 BlogRouter.use(express.json())
 BlogRouter.use(cors())
 
-BlogRouter.get('/', (request, response) => {
-    Blog
-      .find({})
-      .then(blogs => {
-        response.json(blogs)
-      })
+BlogRouter.get('/', async (request, response) => {
+    const blogs = await Blog.find({})
+    if(blogs)
+    {
+      response.json(blogs)
+    }
+    else
+    {
+      response.status(404).end()
+    }
+    
   })
 
   BlogRouter.post('/', (request, response) => {
