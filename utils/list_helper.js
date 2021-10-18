@@ -81,4 +81,56 @@ const mostBlogs = (blogs) =>
     return obj
 }
 
-module.exports = {dummy,totalLikes,favoriteBlog,mostBlogs}
+const mostLikes = (blogs) =>
+{
+
+    const unique = (value, index, self) => {
+        return self.indexOf(value) === index
+      }
+
+    const authors = blogs.map(blog => blog.author)
+    const uniqueAuthors = authors.filter(unique)
+
+    const reqFields = []
+    uniqueAuthors.forEach(uniqueAuthor => {
+        const obj = {
+            'author': uniqueAuthor,
+            'likes': 0
+        }
+        reqFields.push(obj)
+    })
+
+
+    blogs.forEach(blog => {
+        reqFields.forEach(reqField => {
+            if(reqField.author === blog.author)
+            {
+                Object.keys(reqField).map( key =>
+                {
+                    if(key==='likes')
+                    {
+                        reqField['likes']+=blog.likes
+                    }
+                    
+                })
+
+            }    
+        })
+    })
+
+    let max = reqFields[0].likes
+    const obj = {}
+
+    reqFields.forEach(reqField => {
+        if(reqField.likes >= max)
+        {
+            max = reqField.likes
+            obj['author'] = reqField.author
+            obj['likes'] = reqField.likes
+        }
+    })
+
+    return obj
+}
+
+module.exports = {dummy,totalLikes,favoriteBlog,mostBlogs,mostLikes}
