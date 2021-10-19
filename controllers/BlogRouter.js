@@ -22,10 +22,19 @@ BlogRouter.get('/', async (request, response) => {
 
   BlogRouter.post('/', async (request, response) => {
     logger.info(request.body)
-
     const blog = new Blog(request.body)
-    await blog.save()
-    response.status(201).json(blog)
+
+    if(blog.url==='' || blog.title==='')
+    {
+      response.status(404).end()
+    }
+    else
+    {
+      await blog.save()
+      response.status(201).json(blog)
+    }
+
+   
 
   })
 

@@ -6,9 +6,9 @@ const mongoUrl = config.MONGODB_URI
 mongoose.connect(mongoUrl).then(logger.info("mongoDB connected"))
 
 const blogSchema = new mongoose.Schema({
-    title: String,
-    author: String,
-    url: String,
+    title: {type:String, default: ''},
+    author: {type:String},
+    url: {type:String, default: ''},
     likes: {type: Number, default: 0}
   })
 
