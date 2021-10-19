@@ -26,7 +26,7 @@ BlogRouter.get('/', async (request, response) => {
 
     if(blog.url==='' || blog.title==='')
     {
-      response.status(404).end()
+      response.status(400).end()
     }
     else
     {

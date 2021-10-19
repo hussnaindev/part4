@@ -47,8 +47,8 @@ beforeEach(async () => {
       })
 
       const res = await api.post('/api/blogs',newBlog)
-      expect(res.status).toBe(404)
-      
+      expect(res.status).toBe(400)
+
   },100000)
 
   afterAll(() => {
