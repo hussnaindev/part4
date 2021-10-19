@@ -50,4 +50,25 @@ BlogRouter.get('/', async (request, response) => {
     
   })
 
+  BlogRouter.put('/:id', async (request, response) => {
+
+    const updateBlog = {
+       title: request.body.title,
+       author: request.body.author,
+       url: request.body.url,
+       likes: request.body.likes
+    }
+
+    const foundAndUpdated = await Blog.findByIdAndUpdate(request.params.id, updateBlog )
+    if(foundAndUpdated)
+    {
+      response.json(foundAndUpdated)
+    }
+    else
+    {
+      response.status(400).json({error: "blog not found"})
+    }
+    
+  })
+
 module.exports = BlogRouter
