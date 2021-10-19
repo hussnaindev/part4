@@ -37,12 +37,11 @@ beforeEach(async () => {
     await blogObject.save()
     blogObject = new Blog(initialBlogs[1])
     await blogObject.save()
-    blogObject = new Blog(initialBlogs[2])
-    await blogObject.save()
   })
 
-test('get all blogs from database', async () => 
+test('add new blog to database', async () => 
 {
+    await api.post('/api/blogs',initialBlogs[2])
     const res = await api.get('/api/blogs')
     expect(res.body).toHaveLength(3)
 },100000)
