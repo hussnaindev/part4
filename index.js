@@ -1,9 +1,12 @@
 const express = require('express')
 const app = express()
 const BlogRouter = require('./controllers/BlogRouter')
+const UserRouter = require('./controllers/UserRouter')
 const logger = require('./utils/logger')
 
 app.use('/api/blogs',BlogRouter)
+app.use('/api/users',UserRouter)
+
 
 const PORT = 3003
 app.listen(PORT, () => {
