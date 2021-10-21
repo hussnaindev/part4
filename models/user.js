@@ -6,8 +6,8 @@ mongoose.connect(config.MONGODB_URI).then(logger.info('mongoDB connected'))
 
 const userSchema = new mongoose.Schema(
     {
-        username: {type: String, unique:true},
-        password: {type: String},
+        username: {type: String, minlength: 3, unique:true, required:true},
+        passwordHash: {type: String},
         name: {type: String}
     }
 )

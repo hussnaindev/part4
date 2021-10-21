@@ -22,13 +22,25 @@ UserRouter.post('/', async (request,response) =>
     })
 
     try{
-        await user.save()
-        response.status(201).json(user)
+        
+        if(request.body.password.length < 3)
+        {
+            response.status(400).json({error: "password should contain minimum 3 characters"})
+        }
+
+        else
+        {
+            await user.save()
+            response.status(201).json(user)
+
+        }
+       
 
     }
       
     catch(error){
         logger.error(error.message)
+        response.status(400).json({error: error.message})
     }
     
 })
