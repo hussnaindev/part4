@@ -1,14 +1,17 @@
 const express = require('express')
+require('express-async-errors')
 const BlogRouter = express.Router()
 const Blog = require('../models/blog.js')
 const cors = require('cors')
 const logger = require('../utils/logger')
+const errorHandler = require('../utils/errorHandler')
+const User = require('../models/user.js')
 
 BlogRouter.use(express.json())
 BlogRouter.use(cors())
 
 BlogRouter.get('/', async (request, response) => {
-    const blogs = await Blog.find({})
+    const blogs = await Blog.find({}).populate('user')
     if(blogs)
     {
       response.json(blogs)
@@ -22,17 +25,31 @@ BlogRouter.get('/', async (request, response) => {
 
   BlogRouter.post('/', async (request, response) => {
     logger.info(request.body)
-    const blog = new Blog(request.body)
 
-    if(blog.url==='' || blog.title==='')
+    if(request.body.url==='' || request.body.title==='')
     {
       response.status(400).end()
     }
     else
     {
-      await blog.save()
-      response.status(201).json(blog)
+          const user = await User.findById(request.body.userId)
+          logger.info(user)
+
+          const blog = new Blog({
+          url: request.body.url,
+          title: request.body.title,
+          author: request.body.author,
+          likes: request.body.likes,
+          user: user.id
+        })
+
+  
+        const savedBlog = await blog.save()
+        user.blogs = user.blogs.concat(savedBlog.id)
+        await user.save()
+        response.status(201).json(savedBlog)
     }
+     
 
   })
 
@@ -70,5 +87,8 @@ BlogRouter.get('/', async (request, response) => {
     }
     
   })
+
+  BlogRouter.use(errorHandler.unknownEndpoint)
+  BlogRouter.use(errorHandler.errorHandler)
 
 module.exports = BlogRouter

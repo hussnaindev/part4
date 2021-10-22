@@ -22,7 +22,7 @@ UserRouter.post('/', async (request,response) =>
     })
 
     try{
-        
+
         if(request.body.password.length < 3)
         {
             response.status(400).json({error: "password should contain minimum 3 characters"})
@@ -30,9 +30,8 @@ UserRouter.post('/', async (request,response) =>
 
         else
         {
-            await user.save()
-            response.status(201).json(user)
-
+            const savedUser = await user.save()
+            response.status(201).json(savedUser)
         }
        
 
@@ -50,7 +49,7 @@ UserRouter.get('/', async (request,response) =>
     logger.info(request.body)
 
     try{
-        const users = await User.find({})
+        const users = await User.find({}).populate('blogs')
         response.status(200).json(users)
     }
       
