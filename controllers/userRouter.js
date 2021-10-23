@@ -1,14 +1,14 @@
 const express = require('express')
-const UserRouter = express.Router()
+const userRouter = express.Router()
 const User = require('../models/user')
 const cors = require('cors')
 const logger = require('../utils/logger')
 const bcrypt = require('bcrypt')
 
-UserRouter.use(express.json())
-UserRouter.use(cors())
+userRouter.use(express.json())
+userRouter.use(cors())
 
-UserRouter.post('/', async (request,response) => 
+userRouter.post('/', async (request,response) => 
 {
     logger.info(request.body)
 
@@ -44,7 +44,7 @@ UserRouter.post('/', async (request,response) =>
     
 })
 
-UserRouter.get('/', async (request,response) => 
+userRouter.get('/', async (request,response) => 
 {
     logger.info(request.body)
 
@@ -59,4 +59,4 @@ UserRouter.get('/', async (request,response) =>
     
 })
 
-module.exports = UserRouter 
+module.exports = userRouter 

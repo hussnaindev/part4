@@ -1,16 +1,25 @@
 const express = require('express')
 require('express-async-errors')
-const BlogRouter = express.Router()
+const blogRouter = express.Router()
 const Blog = require('../models/blog.js')
 const cors = require('cors')
 const logger = require('../utils/logger')
 const errorHandler = require('../utils/errorHandler')
 const User = require('../models/user.js')
+const jwt = require('jsonwebtoken')
 
-BlogRouter.use(express.json())
-BlogRouter.use(cors())
+blogRouter.use(express.json())
+blogRouter.use(cors())
 
-BlogRouter.get('/', async (request, response) => {
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    return authorization.substring(7)
+  }
+  return null
+}
+
+blogRouter.get('/', async (request, response) => {
     const blogs = await Blog.find({}).populate('user')
     if(blogs)
     {
@@ -23,7 +32,7 @@ BlogRouter.get('/', async (request, response) => {
     
   })
 
-  BlogRouter.post('/', async (request, response) => {
+  blogRouter.post('/', async (request, response) => {
     logger.info(request.body)
 
     if(request.body.url==='' || request.body.title==='')
@@ -32,7 +41,16 @@ BlogRouter.get('/', async (request, response) => {
     }
     else
     {
-          const user = await User.findById(request.body.userId)
+         const token = getTokenFrom(request)
+         logger.info(token)
+         const decodedToken = jwt.verify(token, process.env.SECRET)
+         logger.info(decodedToken)
+         if (!token || !decodedToken.id) 
+         {
+            return response.status(401).json({ error: 'token missing or invalid' })
+         }
+          
+          const user = await User.findById(decodedToken.id)
           logger.info(user)
 
           const blog = new Blog({
@@ -41,7 +59,7 @@ BlogRouter.get('/', async (request, response) => {
           author: request.body.author,
           likes: request.body.likes,
           user: user.id
-        })
+          })
 
   
         const savedBlog = await blog.save()
@@ -53,7 +71,7 @@ BlogRouter.get('/', async (request, response) => {
 
   })
 
-  BlogRouter.delete('/:id', async (request, response) => {
+  blogRouter.delete('/:id', async (request, response) => {
 
     const found = await Blog.findByIdAndDelete(request.params.id)
     if(found)
@@ -67,7 +85,7 @@ BlogRouter.get('/', async (request, response) => {
     
   })
 
-  BlogRouter.put('/:id', async (request, response) => {
+  blogRouter.put('/:id', async (request, response) => {
 
     const updateBlog = {
        title: request.body.title,
@@ -88,7 +106,7 @@ BlogRouter.get('/', async (request, response) => {
     
   })
 
-  BlogRouter.use(errorHandler.unknownEndpoint)
-  BlogRouter.use(errorHandler.errorHandler)
+  blogRouter.use(errorHandler.unknownEndpoint)
+  blogRouter.use(errorHandler.errorHandler)
 
-module.exports = BlogRouter
+module.exports = blogRouter
