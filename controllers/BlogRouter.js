@@ -4,7 +4,7 @@ const blogRouter = express.Router()
 const Blog = require('../models/blog.js')
 const cors = require('cors')
 const logger = require('../utils/logger')
-const errorHandler = require('../utils/errorHandler')
+const middleware = require('../utils/middleware')
 const User = require('../models/user.js')
 const jwt = require('jsonwebtoken')
 
@@ -97,7 +97,7 @@ blogRouter.get('/', async (request, response) => {
     
   })
 
-  blogRouter.use(errorHandler.unknownEndpoint)
-  blogRouter.use(errorHandler.errorHandler)
+  blogRouter.use(middleware.unknownEndpoint)
+  blogRouter.use(middleware.errorHandler)
 
 module.exports = blogRouter
