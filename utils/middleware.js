@@ -1,5 +1,6 @@
 const logger = require('./logger')
-const Blog = require('./blog.js')
+const User = require('../models/user.js')
+const jwt = require('jsonwebtoken')
 
 const tokenExtractor = (request,response,next) =>
 {
@@ -14,7 +15,7 @@ const tokenExtractor = (request,response,next) =>
   next()
 }
 
-const userExtractor = (request,response,next) =>
+const userExtractor = async (request,response,next) =>
 {
   const authorization = request.get('authorization')
   if (authorization && authorization.toLowerCase().startsWith('bearer ')) {

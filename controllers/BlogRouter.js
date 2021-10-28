@@ -7,7 +7,6 @@ const logger = require('../utils/logger')
 const middleware = require('../utils/middleware')
 const User = require('../models/user.js')
 const jwt = require('jsonwebtoken')
-const blog = require('../models/blog.js')
 
 blogRouter.use(express.json())
 blogRouter.use(cors())
@@ -26,16 +25,7 @@ blogRouter.get('/', async(request, response) => {
 blogRouter.post('/', async(request, response) => {
     logger.info(request.body)
 
-    if (request.body.url === '' || request.body.title === '') {
-        response.status(400).end()
-    } else {
-        const decodedToken = jwt.verify(request.token, process.env.SECRET)
-        logger.info(decodedToken)
-        if (!request.token || !decodedToken.id) {
-            return response.status(401).json({ error: 'token missing or invalid' })
-        }
-
-        const user = await User.findById(decodedToken.id)
+        const user = request.user
         logger.info(user)
 
         const blog = new Blog({
@@ -51,20 +41,11 @@ blogRouter.post('/', async(request, response) => {
         user.blogs = user.blogs.concat(savedBlog.id)
         await user.save()
         response.status(201).json(savedBlog)
-    }
-
-
-})
+    })
 
 blogRouter.delete('/:id', async(request, response) => {
-
-    const decodedToken = jwt.verify(request.token, process.env.SECRET)
-    logger.info(decodedToken)
-    if (!request.token || !decodedToken.id) {
-        return response.status(401).json({ error: 'token missing or invalid' })
-    }
-
-    const user = await User.findById(decodedToken.id)
+    
+    const user = request.user
     logger.info(user)
     const blog = await Blog.findById(request.params.id)
     logger.info(blog)

@@ -6,9 +6,9 @@ const userRouter = require('./controllers/userRouter')
 const loginRouter = require('./controllers/loginRouter')
 const logger = require('./utils/logger')
 
-app.use(middleware.userExtractor)
+
 app.use('/api/login', loginRouter)
-app.use('/api/blogs',blogRouter)
+app.use('/api/blogs',middleware.userExtractor,blogRouter)
 app.use('/api/users',userRouter)
 
 
