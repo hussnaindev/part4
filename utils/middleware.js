@@ -1,4 +1,5 @@
 const logger = require('./logger')
+const Blog = require('./blog.js')
 
 const tokenExtractor = (request,response,next) =>
 {
@@ -10,6 +11,31 @@ const tokenExtractor = (request,response,next) =>
   {
         request.token = null
   }
+  next()
+}
+
+const userExtractor = (request,response,next) =>
+{
+  const authorization = request.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+        request.token = authorization.substring(7)
+  }
+  else if(!authorization && !authorization.toLowerCase().startsWith('bearer '))
+  {
+        request.token = null
+  }
+
+  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+  logger.info(decodedToken)
+  if (!request.token || !decodedToken.id) 
+  {
+    request.user = null
+  }
+  else
+  {
+    request.user = await User.findById(decodedToken.id)
+  }
+
   next()
 }
 
@@ -42,4 +68,4 @@ const unknownEndpoint = (request, response) =>
     next(error)
   }
   
-module.exports = {unknownEndpoint,errorHandler,tokenExtractor}
+module.exports = {unknownEndpoint,errorHandler,tokenExtractor,userExtractor}
